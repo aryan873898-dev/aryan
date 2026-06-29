@@ -4,6 +4,7 @@ const dotenv =require("dotenv");
 dotenv.config();
 const Student = require("./models/Student");
 const { Server } = require("node:http");
+const { json } = require("node:stream/consumers");
 
 const app =express();
 app.use(express.json());
@@ -52,17 +53,35 @@ app.put("/api/students/:id",async(req,res)=>{
                 success:false,
                 message:"Student Not Found"
             })
-        
-    }
-    res.json({
-        message:"Records Updated"
-    })
+            
+        }
+        res.json({
+            message:"Records Updated"
+        })
    }
    catch(error){
-    console.log("Unable to Update",error);
-   }
+       console.log("Unable to Update",error);
+    }
 });
 
+app.delete("/api/students/:id",async(req,res)=>{
+    try{
+        const {id}= req.params;
+        const student =await Student.findByIdAndDelete(id);
+        if(!student){
+           return res.status(401).json({
+            message:"Invalid Student ID"
+           });
+        }
+        res.json({
+            message:"Record Deleted"
+        });
+    }
+    catch (error){
+        console.log("Unable to Delete",error);
+    }
+
+});
 
 const PORT =process.env.PORT || 5001;
 
