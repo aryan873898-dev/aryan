@@ -32,7 +32,7 @@ app.post("/api/students", async (req,res)=>{
 
 app.get("/api/students", async (req, res)=>{
     try{
-        const students =await student.find();
+        const students =await Student.find();
         res.json({
             message:"ALL records",
             data:students
@@ -42,6 +42,26 @@ app.get("/api/students", async (req, res)=>{
         console.log("Record nhi mil rha hai",err);
     }
 })
+
+app.put("/api/students/:id",async(req,res)=>{
+    try{
+        const {id} = req.params;
+        const student = await Student.findByIdAndUpdate(id,req.body);
+        if(!student){
+            return res.status(401).json({
+                success:false,
+                message:"Student Not Found"
+            })
+        
+    }
+    res.json({
+        message:"Records Updated"
+    })
+   }
+   catch(error){
+    console.log("Unable to Update",error);
+   }
+});
 
 
 const PORT =process.env.PORT || 5001;
